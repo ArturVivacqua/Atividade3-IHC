@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funções JavaScript</title>
+    <script>
+        function getDataHora() {
+            var dataHora = new Date();
+            return dataHora.toLocaleString();
+        }
+
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/[^\d]+/g,'');
+            if (cpf == '') return false;
+
+            if (cpf.length != 11 || 
+                cpf == "00000000000" || 
+                cpf == "11111111111" || 
+                cpf == "22222222222" || 
+                cpf == "33333333333" || 
+                cpf == "44444444444" || 
+                cpf == "55555555555" || 
+                cpf == "66666666666" || 
+                cpf == "77777777777" || 
+                cpf == "88888888888" || 
+                cpf == "99999999999")
+                    return false;
+
+            var add = 0;
+            for (var i = 0; i < 9; i++)
+                add += parseInt(cpf.charAt(i)) * (10 - i);
+            var rev = 11 - (add % 11);
+            if (rev == 10 || rev == 11)
+                rev = 0;
+            if (rev != parseInt(cpf.charAt(9)))
+                return false;
+
+            add = 0;
+            for (var i = 0; i < 10; i++)
+                add += parseInt(cpf.charAt(i)) * (11 - i);
+            rev = 11 - (add % 11);
+            if (rev == 10 || rev == 11)
+                rev = 0;
+            if (rev != parseInt(cpf.charAt(10)))
+                return false;
+
+            return true;
+        }
+
+        function validarCNPJ(cnpj) {
+            cnpj = cnpj.replace(/[^\d]+/g,'');
+
+            if(cnpj == '') return false;
+
+            if (cnpj.length != 14)
+                return false;
+
+            if (!/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/.test(cnpj))
+                return false;
+
+            if (cnpj == "00000000000000" || 
+                cnpj == "11111111111111" || 
+                cnpj == "22222222222222" || 
+                cnpj == "33333333333333" || 
+                cnpj == "44444444444444" || 
+                cnpj == "55555555555555" || 
+                cnpj == "66666666666666" || 
+                cnpj == "77777777777777" || 
+                cnpj == "88888888888888" || 
+                cnpj == "99999999999999")
+                    return false;
+
+            tamanho = cnpj.length - 2
+            numeros = cnpj.substring(0,tamanho);
+            digitos = cnpj.substring(tamanho);
+            soma = 0;
+            pos = tamanho - 7;
+            for (i = tamanho; i >= 1; i--) {
+              soma += numeros.charAt(tamanho - i) * pos--;
+              if (pos < 2)
+                    pos = 9;
+            }
+            resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+            if (resultado != digitos.charAt(0))
+                return false;
+
+            tamanho = tamanho + 1;
+            numeros = cnpj.substring(0,tamanho);
+            soma = 0;
+            pos = tamanho - 7;
+            for (i = tamanho; i >= 1; i--) {
+              soma += numeros.charAt(tamanho - i) * pos--;
+              if (pos < 2)
+                    pos = 9;
+            }
+            resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+            if (resultado != digitos.charAt(1))
+                  return false;
+
+            return true;
+        }
+
+        function valorAbsoluto(numero) {
+            return Math.abs(numero);
+        }
+
+        function arredondarValor(valor, casasDecimais) {
+            return valor.toFixed(casasDecimais);
+        }
+
+        function calcularComissao(valorVenda, taxaComissao) {
+            return valorVenda * (taxaComissao / 100);
+        }
+
+        function exibirResultados() {
+            var cpf = document.getElementById("cpf").value;
+            var cnpj = document.getElementById("cnpj").value;
+            var valor = parseFloat(document.getElementById("valor").value);
+            var valorVenda = parseFloat(document.getElementById("valorVenda").value);
+            var taxaComissao = parseFloat(document.getElementById("taxaComissao").value);
+            var casasDecimais = parseInt(document.getElementById("casasDecimais").value);
+
+            document.getElementById("cpfValido").innerText = validarCPF(cpf) ? "Válido" : "Inválido";
+            document.getElementById("cnpjValido").innerText = validarCNPJ(cnpj) ? "Válido" : "Inválido";
+            document.getElementById("valorAbsoluto").innerText = valorAbsoluto(valor);
+            document.getElementById("valorArredondado").innerText = arredondarValor(valor, casasDecimais);
+            document.getElementById("valorComissao").innerText = calcularComissao(valorVenda, taxaComissao);
+        }
+    </script>
+</head>
+<body>
+    <h1>Funções JavaScript</h1>
+
+    <p>Data e Hora em tempo real: <span id="dataHora"></span></p>
+
+    <h2>Insira os dados:</h2>
+    <form>
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" name="cpf" placeholder="Ex: 000.000.000-00"><br><br>
+
+        <label for="cnpj">CNPJ:</label>
+        <input type="text" id="cnpj" name="cnpj" placeholder="Ex: 00.000.000/0001-00"><br><br>
+
+        <label for="valor">Valor:</label>
+        <input type="text" id="valor" name="valor"><br><br>
+
+        <label for="valorVenda">Valor da Venda:</label>
+        <input type="text" id="valorVenda" name="valorVenda"><br><br>
+
+        <label for="taxaComissao">Taxa de Comissão (%):</label>
+        <input type="text" id="taxaComissao" name="taxaComissao"><br><br>
+
+        <label for="casasDecimais">Casas Decimais para Arredondamento:</label>
+        <input type="text" id="casasDecimais" name="casasDecimais" value="2"><br><br>
+
+        <button type="button" onclick="exibirResultados()">Exibir Resultados</button>
+    </form>
+
+    <h2>Resultados:</h2>
+    <p>CPF válido: <span id="cpfValido"></span></p>
+    <p>CNPJ válido: <span id="cnpjValido"></span></p>
+    <p>Valor Absoluto: <span id="valorAbsoluto"></span></p>
+    <p>Arredondamento: <span id="valorArredondado"></span></p>
+    <p>Comissão: <span id="valorComissao"></span></p>
+
+    <script>
+        setInterval(function(){
+            document.getElementById("dataHora").innerText = getDataHora();
+        }, 1000);
+    </script>
+</body>
+</html>
